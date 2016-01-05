@@ -18,9 +18,23 @@ head(amd)
 str(amd)
 ```
 
+The date variable needs to be converted into a date format.  
+```{r}
+amd$date <- as.Date(amd$date, "%Y-%m-%d")
+
+##Verify that reformatting was successful
+
+class(amd$date)
+```
+
+Lastly, group the data by date and time interval, using the group_by() function in the dplyr package. 
+
+```{r}
+library(dplyr)
+amd <- group_by(amd, date)
+```
 
 ## What is mean total number of steps taken per day?
-
 
 
 ## What is the average daily activity pattern?
