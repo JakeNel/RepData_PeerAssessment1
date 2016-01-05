@@ -8,6 +8,15 @@ output:
 
 ## Loading and preprocessing the data
 
+```{r}
+amd <- read.csv(unz("activity.zip", "activity.csv"))
+```
+Here is what the data looks like:
+
+```{r}
+head(amd)
+str(amd)
+```
 
 
 ## What is mean total number of steps taken per day?
