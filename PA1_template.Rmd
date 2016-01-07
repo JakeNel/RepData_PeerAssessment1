@@ -10,6 +10,7 @@ output:
 
 ```{r}
 amd <- read.csv(unz("activity.zip", "activity.csv"))
+gc()
 ```
 Here is what the data looks like:
 
@@ -35,6 +36,19 @@ amd <- group_by(amd, date)
 ```
 
 ## What is mean total number of steps taken per day?
+
+Using the summarize function from dplyr.  
+
+```{r}
+totalsteps <- summarize(amd, sum=sum(steps))
+```
+
+Here is a histogram, which shows the distribution of the number of steps taken per day:
+
+```{r}
+library(ggplot2)
+ggplot() + aes(na.omit(totalsteps$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue")
+```
 
 
 ## What is the average daily activity pattern?
