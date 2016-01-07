@@ -12,7 +12,7 @@ output:
 amd <- read.csv(unz("activity.zip", "activity.csv"))
 gc()
 ```
-Here is what the data looks like:
+Here is an overview of what the data looks like:
 
 ```{r}
 head(amd)
@@ -32,7 +32,8 @@ Lastly, group the data by date and time interval, using the group_by() function 
 
 ```{r}
 library(dplyr)
-amd <- group_by(amd, date)
+grp_by_date <- group_by(amd, date)
+grp_by_interval <- group_by(amd, interval)
 ```
 
 ## What is mean total number of steps taken per day?
@@ -40,19 +41,43 @@ amd <- group_by(amd, date)
 Using the summarize function from dplyr.  
 
 ```{r}
-totalsteps <- summarize(amd, sum=sum(steps))
+totalSteps <- summarize(grp_by_date, sum=sum(steps))
 ```
 
 Here is a histogram, which shows the distribution of the number of steps taken per day:
 
 ```{r}
 library(ggplot2)
-ggplot() + aes(na.omit(totalsteps$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue")
+ggplot() + aes(na.omit(totalSteps$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue") + labs(title = "Distribution of the Total Number of Steps ", x = "Total number of Steps")
+```
+
+The mean and median of the total steps taken per day can calculated fom the same dataset:
+
+```{r}
+mean(totalSteps$sum, na.rm = TRUE)
+median(totalSteps$sum, na.rm = TRUE)
 ```
 
 
 ## What is the average daily activity pattern?
 
+First we prep the data for analysis.  
+
+```{r}
+averageSteps <- summarize(grp_by_interval, mean = mean(steps, na.rm = TRUE))
+```
+
+Here is the time series plot by time interval:
+
+```{r}
+ggplot() + aes(averageSteps$interval, averageSteps$mean) + geom_line(size = 1.5, color = "purple") + labs(title = "Time Series of Average Steps by 5-minute Interval", x = "Interval", y = "Average # of Steps")
+```
+
+The interval with the most number of steps is given in the following code:
+
+```{r}
+as.numeric(averageSteps[which.max(averageSteps$mean), 1])
+```
 
 
 ## Imputing missing values
