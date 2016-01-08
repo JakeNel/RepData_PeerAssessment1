@@ -66,12 +66,8 @@ img {
 
 <div id="loading-and-preprocessing-the-data" class="section level2">
 <h2>Loading and preprocessing the data</h2>
-<p>First, I loaded the data in using read.csv(). The code assumes that the folder containing the dataset is your working directory, and is called “activity.csv”. Because it is a zip file, the unz() function is used to open a connection inside the zip file and extract the csv file. The gc() function is the safest and easiest way to close the connection after the data is read in.</p>
-<pre class="r"><code>amd &lt;- read.csv(unz(&quot;activity.zip&quot;, &quot;activity.csv&quot;))
-gc()</code></pre>
-<pre><code>##          used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells 312587 16.7     592000 31.7   361341 19.3
-## Vcells 537474  4.2    1023718  7.9   968830  7.4</code></pre>
+<p>First, I loaded the data in using read.csv(). The code assumes that the folder containing the dataset is your working directory, and is called “activity.csv”. Because it is a zip file, the unzip() function is used to open a connection inside the zip file and extract the csv file.</p>
+<pre class="r"><code>amd &lt;- read.csv(unzip(&quot;activity.zip&quot;, &quot;activity.csv&quot;))</code></pre>
 <p>Here is an overview of what the data looks like:</p>
 <pre class="r"><code>head(amd)</code></pre>
 <pre><code>##   steps       date interval
@@ -141,7 +137,7 @@ mn</code></pre>
 <p>The original dataset has many missing values, which can potentially bias our analysis in unknown ways. The number of missing values for number of steps is calculated in the following code:</p>
 <pre class="r"><code>sum(is.na(amd$steps))</code></pre>
 <pre><code>## [1] 2304</code></pre>
-<p>My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset. I believe this is the best way to do so:</p>
+<p>My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset:</p>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>

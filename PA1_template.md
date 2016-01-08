@@ -3,18 +3,11 @@
 
 ## Loading and preprocessing the data
 
-First, I loaded the data in using read.csv().  The code assumes that the folder containing the dataset is your working directory, and is called "activity.csv".  Because it is a zip file, the unz() function is used to open a connection inside the zip file and extract the csv file.  The gc() function is the safest and easiest way to close the connection after the data is read in.   
+First, I loaded the data in using read.csv().  The code assumes that the folder containing the dataset is your working directory, and is called "activity.csv".  Because it is a zip file, the unzip() function is used to open a connection inside the zip file and extract the csv file.  
 
 
 ```r
-amd <- read.csv(unz("activity.zip", "activity.csv"))
-gc()
-```
-
-```
-##          used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells 312587 16.7     592000 31.7   361341 19.3
-## Vcells 537474  4.2    1023718  7.9   968830  7.4
+amd <- read.csv(unzip("activity.zip", "activity.csv"))
 ```
 Here is an overview of what the data looks like:
 
@@ -165,7 +158,7 @@ sum(is.na(amd$steps))
 ## [1] 2304
 ```
 
-My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset. I believe this is the best way to do so:
+My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset:
 
 
 
