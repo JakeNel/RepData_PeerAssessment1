@@ -101,10 +101,28 @@ for(i in 1:nrow(amd)) {
         interval <- amd[i, "interval"]
         newValue <- averageSteps[which(averageSteps$interval == interval), "mean"]
         amd_modified[i, "steps"] <- newValue 
-        
     }
 }
 ```
 
+With this new dataset, we can simply repeat the histogram for total steps that we made before:
+
+```{r}
+mod_group <- group_by(amd_modified, date)
+totalSteps_mod <- summarize(mod_group, sum=sum(steps))
+ggplot() + aes(na.omit(totalSteps_mod$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue") + labs(title = "Distribution of the Total Number of Steps with Imputed Values ", x = "Total number of Steps")
+```
+
+The new mean and median are given in the following:  
+```{r}
+mn <- mean(totalSteps_mod$sum, na.rm = TRUE)
+md <- median(totalSteps_mod$sum, na.rm = TRUE)
+mn
+md
+```
+
+We see that under the new imputed values...the mean and median don't change much, but as we might expect, the distribution is much more centrally concentrated.  
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+

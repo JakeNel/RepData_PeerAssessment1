@@ -161,6 +161,46 @@ sum(is.na(amd$steps))
 My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset:
 
 
+```r
+amd_modified <- amd
+for(i in 1:nrow(amd)) {
+    if(is.na(amd[i, "steps"])) {
+        interval <- amd[i, "interval"]
+        newValue <- averageSteps[which(averageSteps$interval == interval), "mean"]
+        amd_modified[i, "steps"] <- newValue 
+    }
+}
+```
 
+With this new dataset, we can simply repeat the histogram for total steps that we made before:
+
+
+```r
+mod_group <- group_by(amd_modified, date)
+totalSteps_mod <- summarize(mod_group, sum=sum(steps))
+ggplot() + aes(na.omit(totalSteps_mod$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue") + labs(title = "Distribution of the Total Number of Steps with Imputed Values ", x = "Total number of Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+
+The new mean and median are given in the following:  
+
+```r
+mn <- mean(totalSteps_mod$sum, na.rm = TRUE)
+md <- median(totalSteps_mod$sum, na.rm = TRUE)
+mn
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+md
+```
+
+```
+## [1] 10766.19
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
