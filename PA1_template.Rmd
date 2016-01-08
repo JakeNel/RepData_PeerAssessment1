@@ -10,7 +10,7 @@ output:
 
 First, I loaded the data in using read.csv().  The code assumes that the folder containing the dataset is your working directory, and is called "activity.csv".  Because it is a zip file, the unz() function is used to open a connection inside the zip file and extract the csv file.  The gc() function is the safest and easiest way to close the connection after the data is read in.   
 
-```{r}
+```{r warning=FALSE}
 amd <- read.csv(unz("activity.zip", "activity.csv"))
 gc()
 ```
@@ -87,6 +87,17 @@ as.numeric(averageSteps[which.max(averageSteps$mean), 1])
 
 ## Imputing missing values
 
+The original dataset has many missing values, which can potentially bias our analysis in unknown ways.  The number of missing values for number of steps is calculated in the following code:
+
+```{r}
+sum(is.na(amd$steps))
+```
+
+My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset. I believe this is the best way to do so:
+
+```{r}
+
+```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?

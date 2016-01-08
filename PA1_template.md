@@ -13,8 +13,8 @@ gc()
 
 ```
 ##          used (Mb) gc trigger (Mb) max used (Mb)
-## Ncells 304966 16.3     592000 31.7   350000 18.7
-## Vcells 523478  4.0    1023718  7.9   945743  7.3
+## Ncells 312587 16.7     592000 31.7   361341 19.3
+## Vcells 537474  4.2    1023718  7.9   968830  7.4
 ```
 Here is an overview of what the data looks like:
 
@@ -58,7 +58,7 @@ class(amd$date)
 ## [1] "Date"
 ```
 
-Lastly, group the data by date and time interval, using the group_by() function in the dplyr package. 
+Lastly, group the data by date and time interval, using the group_by() function in the dplyr package. Each type of grouping will be used later.  
 
 
 ```r
@@ -69,14 +69,28 @@ grp_by_interval <- group_by(amd, interval)
 
 ## What is mean total number of steps taken per day?
 
-Using the summarize function from dplyr.  
+Using the summarize function from dplyr, a new dataframe is created which gives the total number of steps on each date in the sample.   
 
 
 ```r
 totalSteps <- summarize(grp_by_date, sum=sum(steps))
+head(totalSteps)
 ```
 
-Here is a histogram, which shows the distribution of the number of steps taken per day:
+```
+## Source: local data frame [6 x 2]
+## 
+##         date   sum
+##       (date) (int)
+## 1 2012-10-01    NA
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+## 4 2012-10-04 12116
+## 5 2012-10-05 13294
+## 6 2012-10-06 15420
+```
+
+This histogram shows the distribution of total number of steps that we just calculated:
 
 
 ```r
@@ -90,7 +104,9 @@ The mean and median of the total steps taken per day can calculated fom the same
 
 
 ```r
-mean(totalSteps$sum, na.rm = TRUE)
+mn <- mean(totalSteps$sum, na.rm = TRUE)
+md <- median(totalSteps$sum, na.rm = TRUE)
+mn
 ```
 
 ```
@@ -98,7 +114,7 @@ mean(totalSteps$sum, na.rm = TRUE)
 ```
 
 ```r
-median(totalSteps$sum, na.rm = TRUE)
+md
 ```
 
 ```
@@ -108,14 +124,14 @@ median(totalSteps$sum, na.rm = TRUE)
 
 ## What is the average daily activity pattern?
 
-First we prep the data for analysis.  
+Again, using the summarize() function in dplyr, a new dataframe is created which gives the average number of steps recorded for each time interval:
 
 
 ```r
 averageSteps <- summarize(grp_by_interval, mean = mean(steps, na.rm = TRUE))
 ```
 
-Here is the time series plot by time interval:
+Here is the time series plot by time interval, which represents the data we just calculated:
 
 
 ```r
@@ -137,6 +153,20 @@ as.numeric(averageSteps[which.max(averageSteps$mean), 1])
 
 
 ## Imputing missing values
+
+The original dataset has many missing values, which can potentially bias our analysis in unknown ways.  The number of missing values for number of steps is calculated in the following code:
+
+
+```r
+sum(is.na(amd$steps))
+```
+
+```
+## [1] 2304
+```
+
+My strategy for dealing with missing values is to replace the NA value with the average number of steps for each time interval that was taken from the rest of the dataset. I believe this is the best way to do so:
+
 
 
 
