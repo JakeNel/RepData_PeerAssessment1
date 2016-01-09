@@ -8,7 +8,7 @@ output:
 
 ## Loading and preprocessing the data
 
-First, I loaded the data in using read.csv().  The code assumes that the folder containing the dataset is your working directory, and is called "activity.csv".  Because it is a zip file, the unzip() function is used to open a connection inside the zip file and extract the csv file.  
+First, I loaded the data in using read.csv().  The code assumes that the folder containing the dataset is your working directory, and is called "activity.zip".  Because it is a zip file, the unzip() function is used to open a connection inside the zip file and extract the csv file.  
 
 ```{r warning=FALSE}
 amd <- read.csv(unzip("activity.zip", "activity.csv"))
@@ -74,7 +74,7 @@ averageSteps <- summarize(grp_by_interval, mean = mean(steps, na.rm = TRUE))
 Here is the time series plot by time interval, which represents the data we just calculated:
 
 ```{r}
-ggplot() + aes(averageSteps$interval, averageSteps$mean) + geom_line(size = 1.5, color = "purple") + labs(title = "Time Series of Average Steps by 5-minute Interval", x = "Interval", y = "Average # of Steps")
+  ggplot() + aes(averageSteps$interval, averageSteps$mean) + geom_line(size = 1.5, color = "purple") + labs(title = "Time Series of Average Steps by 5-minute Interval", x = "Interval", y = "Average # of Steps")
 ```
 
 The interval with the most number of steps is given in the following code:
@@ -103,13 +103,16 @@ for(i in 1:nrow(amd)) {
         amd_modified[i, "steps"] <- newValue 
     }
 }
+
+## New grouped data
+mod_group_date <- group_by(amd_modified, date)
 ```
 
 With this new dataset, we can simply repeat the histogram for total steps that we made before:
 
 ```{r}
-mod_group <- group_by(amd_modified, date)
-totalSteps_mod <- summarize(mod_group, sum=sum(steps))
+
+totalSteps_mod <- summarize(mod_group_date, sum=sum(steps))
 ggplot() + aes(na.omit(totalSteps_mod$sum)) + geom_histogram(binwidth = 1000, color = "black", fill = "blue") + labs(title = "Distribution of the Total Number of Steps with Imputed Values ", x = "Total number of Steps")
 ```
 
@@ -125,4 +128,33 @@ We see that under the new imputed values...the mean and median don't change much
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+We can select out the weekdays and weekends with the weekdays() function, grouping it by interval.  
 
+```{r}
+Weekday.dat <- amd_modified [weekdays(totalSteps_mod$date) %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"),]
+
+Weekend.dat <- amd_modified [weekdays(totalSteps_mod$date) %in% c("Saturday", "Sunday"),]
+
+## Group by interval
+
+Weekday.dat <- group_by(Weekday.dat, interval)
+Weekend.dat <- group_by(Weekend.dat, interval)
+
+## Create Average Steps datasets
+
+AverageWeekdaySteps <- summarize(Weekday.dat, mean = mean(steps))
+AverageWeekendSteps <- summarize(Weekend.dat, mean = mean(steps))
+
+## Combine datasets into one, with a new factored variable indicating the day, weekday or weekend.  
+
+Average_byDay <- rbind(AverageWeekdaySteps, AverageWeekendSteps)
+Day <- as.factor(c(rep("Weekday", nrow(AverageWeekdaySteps)), rep("Weekend", nrow(AverageWeekendSteps))))
+Average_byDay <- cbind(Average_byDay, Day)
+```
+
+Then, I perform the same time series as before, but this time with two lines, one for weekdays, and one for weekends.  The README file example suggests putting the two time series graphs on the same grid with two panels. In ggplot, this is done with the facet_grid() function.
+
+```{r}
+
+ggplot(Average_byDay, aes(interval, mean)) + geom_line(size = 1.2, color = "brown") + facet_grid(Day~.)
+```
