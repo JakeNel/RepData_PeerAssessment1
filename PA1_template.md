@@ -238,7 +238,7 @@ Then, I perform the same time series as before, but this time with two lines, on
 
 
 ```r
-ggplot(Average_byDay, aes(interval, mean)) + geom_line(size = 1.2, color = "brown") + facet_grid(Day~.)
+ggplot(Average_byDay, aes(interval, mean)) + geom_line(size = 1.2, color = "brown") + facet_grid(Day~.) + labs(x= "interval", y = "Average # of Steps", title= "Weekday vs Weekend Steps Taken per 5 Minute Interval")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
